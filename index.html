@@ -375,7 +375,7 @@ nav button.spacer{pointer-events:none;opacity:0}
       <div class="quick">
         <button data-go="programme"><div class="ic" style="background:var(--bleu)">1</div><b>Mon programme</b><small>Heure par heure, selon mon parcours</small></button>
         <button data-go="evenement"><div class="ic" style="background:var(--vert)">2</div><b>L'événement</b><small>Objectifs, modules, concours</small></button>
-        <button id="quickPhoto"><div class="ic" style="background:var(--orange)">3</div><b>Photo JED</b><small>Douze cadres à partager</small></button>
+        <button data-go="galerie"><div class="ic" style="background:var(--orange)">3</div><b>Galerie</b><small>Photos et vidéos des JED</small></button>
         <button data-go="infos"><div class="ic" style="background:var(--nuit)">4</div><b>Infos pratiques</b><small>Contacts et lieu</small></button>
       </div>
 
@@ -523,9 +523,7 @@ nav button.spacer{pointer-events:none;opacity:0}
   </main>
 
   <nav id="nav"><span id="pill"></span>
-    <button id="fab" title="Prendre une photo">
-      <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8a2 2 0 0 1 2-2h2l1.5-2h7L17 6h2a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><circle cx="12" cy="12.5" r="3.5"/></svg>
-    </button>
+
   </nav>
 </div>
 
@@ -599,7 +597,7 @@ const ICON={
   photo:'',
   infos:'<circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/>'
 };
-const TABS=[['accueil','Accueil'],['programme','Programme'],['photo','Photo'],['galerie','Galerie'],['infos','Infos']];
+const TABS=[['accueil','Accueil'],['evenement','L\'événement'],['programme','Programme'],['galerie','Galerie'],['infos','Infos']];
 const nav=document.getElementById('nav');
 nav.insertAdjacentHTML('beforeend',TABS.map(([id,l],i)=>
   id==='photo' ? '<button class="spacer"></button>' :
@@ -610,15 +608,33 @@ function movePill(){
   if(!b||!pill) return;
   pill.style.left=b.offsetLeft+'px'; pill.style.width=b.offsetWidth+'px';
 }
-function go(id){
+function go(id,fromHist){
   document.querySelectorAll('nav button').forEach(b=>b.classList.toggle('on',b.dataset.go===id));
   document.querySelectorAll('.screen').forEach(s=>s.classList.toggle('on',s.id==='s-'+id));
   const m=document.getElementById('main'); m.scrollTop=0;
   movePill(); watch();
   if(id==='galerie') loadGal();
   if(id==='accueil') countUp();
+  if(!fromHist && history.state && history.state.s!==id) history.pushState({s:id},'','#'+id);
 }
 window.addEventListener('resize',movePill);
+/* touche retour : écrans et fenêtres */
+const OVL=['lb','qrv','cam'];
+let popping=false;
+history.replaceState({s:'accueil'},'',location.pathname+location.search);
+OVL.forEach(id=>{ const el=document.getElementById(id); if(!el) return; let was=false;
+  new MutationObserver(()=>{ const on=el.classList.contains('on');
+    if(on&&!was) history.pushState({s:(history.state&&history.state.s)||'accueil',ov:id},'');
+    if(!on&&was&&!popping&&history.state&&history.state.ov===id) history.back();
+    was=on; }).observe(el,{attributes:true,attributeFilter:['class']}); });
+window.addEventListener('popstate',e=>{
+  const open=OVL.map(id=>document.getElementById(id)).find(el=>el&&el.classList.contains('on'));
+  popping=true;
+  if(open){ if(open.id==='lb') closeLb(); else if(open.id==='cam'&&typeof closeCam==='function') closeCam(); else open.classList.remove('on'); }
+  const st=(e.state&&e.state.s)||'accueil';
+  if(!document.getElementById('s-'+st).classList.contains('on')) go(st,true);
+  popping=false;
+});
 document.querySelectorAll('[data-go]').forEach(b=>b.addEventListener('click',()=>go(b.dataset.go)));
 
 /* ---------- finitions animées ---------- */
@@ -1332,7 +1348,7 @@ document.getElementById('shShot').addEventListener('click',()=>{
   },'image/png');
 });
 document.getElementById('camClose').addEventListener('click',closeCam);
-document.getElementById('fab').addEventListener('click',openCam);
+
 
 
 /* ---------- installation ---------- */
