@@ -225,6 +225,10 @@ ul.l li{font-size:13.2px;color:var(--gris);margin-bottom:5px}
 .team .av{flex:none;width:38px;height:38px;border-radius:50%;display:grid;place-items:center;color:#fff;font-weight:800;font-size:13px}
 .team b{display:block;font-size:13.2px} .team small{font-size:11.5px;color:var(--gris)}
 
+.mg{display:grid;grid-template-columns:2fr 1fr;grid-template-rows:1fr 1fr;gap:6px;height:200px;margin-top:6px}
+.mg img{width:100%;height:100%;object-fit:cover;border-radius:12px;cursor:pointer;opacity:0;animation:gin .6s var(--e) forwards}
+.mg img:first-child{grid-row:1/3}
+
 /* galerie */
 .gal{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
 .gal img{width:100%;height:128px;object-fit:cover;border-radius:14px;cursor:zoom-in;
@@ -376,6 +380,11 @@ nav button.spacer{pointer-events:none;opacity:0}
         <div><b data-n="500">0</b><span>jeunes attendus</span></div>
         <div><b data-n="3">0</b><span>jours</span></div>
         <div><b data-n="3">0</b><span>modules de formation</span></div>
+      </div>
+
+      <div class="card" id="moments" style="display:none;padding:14px">
+        <h3 style="display:flex;justify-content:space-between;align-items:center">En images<button data-go="galerie" style="font-size:12px;font-weight:800;color:var(--bleu)">Tout voir →</button></h3>
+        <div class="mg"></div>
       </div>
 
       <div class="quick">
@@ -621,7 +630,7 @@ function go(id,fromHist){
   const m=document.getElementById('main'); m.scrollTop=0;
   movePill(); watch();
   if(id==='galerie') loadGal();
-  if(id==='accueil') countUp();
+  if(id==='accueil'){ countUp(); moments(); }
   if(!fromHist && history.state && history.state.s!==id) history.pushState({s:id},'','#'+id);
 }
 window.addEventListener('resize',movePill);
@@ -719,6 +728,7 @@ function live(box){
   if(box.dataset.h!==html){ box.dataset.h=html; box.innerHTML=html; box.querySelector('button').onclick=e=>{ e.stopPropagation(); go(e.currentTarget.dataset.lv); }; }
 }
 tick(); setInterval(tick,1000);
+if(DRIVE.endpoint) setTimeout(loadGal,1200);
 requestAnimationFrame(()=>{ movePill(); countUp(); watch(); });
 
 /* ---------- programme ---------- */
@@ -845,6 +855,14 @@ function renderAlbs(){
   box.querySelectorAll('button').forEach((b,k)=>{ if(k) b.textContent=b.dataset.a;
     b.onclick=()=>{ ALB=b.dataset.a; renderAlbs(); renderGal(); }; });
 }
+function moments(){
+  const box=document.getElementById('moments'); if(!GAL) return;
+  const ph=GAL.files.filter(f=>!/^video\//.test(f.mimeType||'')); if(ph.length<3){ box.style.display='none'; return; }
+  const pick=[]; const pool=ph.slice(); while(pick.length<3&&pool.length) pick.push(pool.splice(Math.floor(Math.random()*pool.length),1)[0]);
+  box.querySelector('.mg').innerHTML=pick.map((f,i)=>'<img loading="lazy" style="animation-delay:'+(i*90)+'ms" src="https://drive.google.com/thumbnail?id='+f.id+'&sz=w'+(i?400:800)+'" alt="">').join('');
+  box.querySelectorAll('.mg img').forEach(im=>im.onclick=()=>go('galerie'));
+  box.style.display='block';
+}
 async function loadGal(){
   if(galLoaded) return; galLoaded=true;
   if(!DRIVE.endpoint){ showLocal('Photos des éditions précédentes. Les images des JED 2026 seront ajoutées ici pendant l\'événement.'); return; }
@@ -854,7 +872,8 @@ async function loadGal(){
     const j=await r.json();
     const files=(j.files||j||[]).filter(f=>!f.mimeType||/^(image|video)\//.test(f.mimeType));
     if(!files.length){ showLocal('Aucune photo pour l\'instant.'); return; }
-    GAL={files, albums:j.albums||[]}; document.getElementById('galSub').textContent='Les photos et vidéos des JED 2026, classées par album.'; renderAlbs(); renderGal();
+    for(let i=files.length-1;i>0;i--){ const k=Math.floor(Math.random()*(i+1)); [files[i],files[k]]=[files[k],files[i]]; }
+    GAL={files, albums:j.albums||[]}; moments(); document.getElementById('galSub').textContent='Les photos et vidéos des JED 2026, classées par album.'; renderAlbs(); renderGal();
   }catch(e){
     galLoaded=false;
     showLocal('Impossible de joindre le Drive. Vérifiez votre connexion.');
