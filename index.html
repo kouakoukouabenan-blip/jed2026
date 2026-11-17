@@ -229,6 +229,20 @@ ul.l li{font-size:13.2px;color:var(--gris);margin-bottom:5px}
 .mg img{width:100%;height:100%;object-fit:cover;border-radius:12px;cursor:pointer;opacity:0;animation:gin .6s var(--e) forwards}
 .mg img:first-child{grid-row:1/3}
 
+.jys{width:100%;display:flex;align-items:center;justify-content:space-between;gap:12px;text-align:left;padding:16px 18px;margin-bottom:14px;border-radius:22px;color:#fff;
+  background:linear-gradient(120deg,#1B4C9C,#2E74CF 60%,#2A60B6);box-shadow:0 14px 30px rgba(35,92,166,.28);position:relative;overflow:hidden}
+.jys::after{content:"";position:absolute;right:-30px;top:-30px;width:130px;height:130px;border-radius:50%;border:14px solid rgba(255,255,255,.08)}
+.jys small{display:block;font-size:10.5px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:#FFB25C}
+.jys b{display:block;font-size:24px;font-weight:900;font-style:italic;letter-spacing:.01em;margin:3px 0 2px}
+.jys em{font-style:normal;font-size:12.5px;opacity:.92}
+.jys .jr{flex:none;width:52px;height:52px;border-radius:50%;background:var(--orange);display:grid;place-items:center;box-shadow:0 0 0 6px rgba(255,255,255,.18)}
+.cad{border-radius:18px;overflow:hidden;box-shadow:0 14px 30px rgba(16,29,47,.18);background:#fff}
+.cad canvas{display:block;width:100%;height:auto;touch-action:none;cursor:grab}
+.zr{display:none;align-items:center;gap:10px;margin-top:12px;font-weight:800;color:var(--gris)}
+.zr.on{display:flex} .zr input{flex:1;accent-color:var(--orange)}
+.cadb{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px}
+.cadb .btn:disabled{opacity:.45}
+
 /* galerie */
 .gal{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
 .gal img{width:100%;height:128px;object-fit:cover;border-radius:14px;cursor:zoom-in;
@@ -382,6 +396,11 @@ nav button.spacer{pointer-events:none;opacity:0}
         <div><b data-n="3">0</b><span>modules de formation</span></div>
       </div>
 
+      <button class="jys" data-go="cadre">
+        <span class="jl"><small>Partagez votre participation</small><b>J’Y SERAI !</b><em>Créez votre visuel avec votre photo</em></span>
+        <span class="jr"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="10" r="3"/><path d="M6.5 18.5c1.3-2.2 3.2-3.3 5.5-3.3s4.2 1.1 5.5 3.3"/></svg></span>
+      </button>
+
       <div class="card" id="moments" style="display:none;padding:14px">
         <h3 style="display:flex;justify-content:space-between;align-items:center">En images<button data-go="galerie" style="font-size:12px;font-weight:800;color:var(--bleu)">Tout voir →</button></h3>
         <div class="mg"></div>
@@ -502,6 +521,20 @@ nav button.spacer{pointer-events:none;opacity:0}
     </section>
 
     <!-- INFOS -->
+    <section class="screen" id="s-cadre">
+      <div class="kick">J’y serai</div>
+      <h1>Ma photo JED 2026</h1>
+      <p style="margin-bottom:14px">Ajoutez votre photo au visuel officiel, puis partagez-le sur vos réseaux avec <span class="ink">#JED2026</span>.</p>
+      <div class="cad"><canvas id="cadC" width="1080" height="1080"></canvas></div>
+      <div class="zr" id="zr"><span>−</span><input type="range" id="cadZ" min="1" max="3" step="0.01" value="1" aria-label="Zoom"><span>+</span></div>
+      <label class="btn btn-o full" style="margin-top:12px;cursor:pointer"><input type="file" id="cadF" accept="image/*" hidden>Choisir ma photo</label>
+      <div class="cadb">
+        <button class="btn btn-g" id="cadD" disabled>Télécharger</button>
+        <button class="btn btn-g" id="cadS" disabled>Partager</button>
+      </div>
+      <p class="note">Faites glisser la photo pour la placer dans le cercle, et réglez le zoom avec le curseur ou avec deux doigts. Votre photo reste sur votre téléphone : elle n’est envoyée nulle part.</p>
+    </section>
+
     <section class="screen" id="s-infos">
       <div class="kick">Infos pratiques</div>
       <h1>Contacts et lieu</h1>
@@ -728,6 +761,40 @@ function live(box){
   if(box.dataset.h!==html){ box.dataset.h=html; box.innerHTML=html; box.querySelector('button').onclick=e=>{ e.stopPropagation(); go(e.currentTarget.dataset.lv); }; }
 }
 tick(); setInterval(tick,1000);
+/* ---------- J'y serai : cadre photo ---------- */
+(function(){
+  const C=document.getElementById('cadC'), X=C.getContext('2d'), S=1080/640, CX=483*S, CY=267*S, R=109*S;
+  const st={img:null,z:1,x:0,y:0}; const fr=new Image(); fr.src='cadre-jed2026.webp'; fr.onload=draw;
+  function draw(){
+    X.clearRect(0,0,1080,1080); X.fillStyle='#1F1F1F'; X.beginPath(); X.arc(CX,CY,R,0,7); X.fill();
+    if(st.img){ const i=st.img, sc=Math.max(2*R/i.width,2*R/i.height)*st.z, w=i.width*sc, h=i.height*sc;
+      const mx=Math.max(0,(w-2*R)/2), my=Math.max(0,(h-2*R)/2); st.x=Math.max(-mx,Math.min(mx,st.x)); st.y=Math.max(-my,Math.min(my,st.y));
+      X.save(); X.beginPath(); X.arc(CX,CY,R,0,7); X.clip(); X.drawImage(i,CX-w/2+st.x,CY-h/2+st.y,w,h); X.restore(); }
+    else { X.fillStyle='rgba(255,255,255,.75)'; X.font='700 30px Inter,sans-serif'; X.textAlign='center'; X.fillText('Votre photo ici',CX,CY+10); }
+    if(fr.complete) X.drawImage(fr,0,0,1080,1080);
+  }
+  document.getElementById('cadF').addEventListener('change',e=>{ const f=e.target.files[0]; if(!f) return;
+    const im=new Image(); im.onload=()=>{ st.img=im; st.z=1; st.x=0; st.y=0; document.getElementById('cadZ').value=1;
+      document.getElementById('zr').classList.add('on'); document.getElementById('cadD').disabled=false; document.getElementById('cadS').disabled=false; draw(); };
+    im.src=URL.createObjectURL(f); });
+  document.getElementById('cadZ').addEventListener('input',e=>{ st.z=+e.target.value; draw(); });
+  const P=new Map(); let d0=0,z0=1;
+  const k=()=>1080/C.getBoundingClientRect().width;
+  C.addEventListener('pointerdown',e=>{ if(!st.img) return; C.setPointerCapture(e.pointerId); P.set(e.pointerId,{x:e.clientX,y:e.clientY});
+    if(P.size===2){ const [a,b]=[...P.values()]; d0=Math.hypot(a.x-b.x,a.y-b.y); z0=st.z; } });
+  C.addEventListener('pointermove',e=>{ if(!P.has(e.pointerId)) return; const o=P.get(e.pointerId);
+    if(P.size===1){ st.x+=(e.clientX-o.x)*k(); st.y+=(e.clientY-o.y)*k(); }
+    P.set(e.pointerId,{x:e.clientX,y:e.clientY});
+    if(P.size===2){ const [a,b]=[...P.values()]; const d=Math.hypot(a.x-b.x,a.y-b.y); st.z=Math.max(1,Math.min(3,z0*d/d0)); document.getElementById('cadZ').value=st.z; }
+    draw(); });
+  const up=e=>P.delete(e.pointerId); C.addEventListener('pointerup',up); C.addEventListener('pointercancel',up);
+  function blob(cb){ C.toBlob(cb,'image/jpeg',.93); }
+  function save(){ blob(b=>{ const a=document.createElement('a'); a.href=URL.createObjectURL(b); a.download='JED2026-jy-serai.jpg'; document.body.appendChild(a); a.click(); a.remove(); toast('Image enregistrée'); }); }
+  document.getElementById('cadD').addEventListener('click',save);
+  document.getElementById('cadS').addEventListener('click',()=>blob(async b=>{ const f=new File([b],'JED2026-jy-serai.jpg',{type:'image/jpeg'});
+    if(navigator.canShare&&navigator.canShare({files:[f]})){ try{ await navigator.share({files:[f],text:'J’y serai ! JED 2026 à Man, du 3 au 5 décembre. #JED2026'}); }catch(e){} } else save(); }));
+  draw();
+})();
 if(DRIVE.endpoint) setTimeout(loadGal,1200);
 requestAnimationFrame(()=>{ movePill(); countUp(); watch(); });
 
