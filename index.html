@@ -253,7 +253,8 @@ ul.l li{font-size:13.2px;color:var(--gris);margin-bottom:5px}
 .gal .gi .pl{position:absolute;left:50%;top:50%;width:42px;height:42px;margin:-21px 0 0 -21px;border-radius:50%;
   background:rgba(16,29,47,.65);display:grid;place-items:center;pointer-events:none}
 .gal .gi .pl::after{content:"";border-left:13px solid #fff;border-top:8px solid transparent;border-bottom:8px solid transparent;margin-left:4px}
-.albs{display:flex;gap:7px;overflow-x:auto;margin:0 -16px 12px;padding:2px 16px;scrollbar-width:none}
+.albs{display:flex;flex-wrap:wrap;gap:7px;margin:0 0 14px;padding:0}
+.albs button{max-width:100%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .albs::-webkit-scrollbar{display:none}
 .albs button{flex:none;padding:8px 14px;border-radius:999px;background:var(--carte);border:1px solid var(--trait);
   font-size:12px;font-weight:700;color:var(--gris);white-space:nowrap}
