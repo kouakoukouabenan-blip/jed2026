@@ -244,27 +244,45 @@ ul.l li{font-size:13.2px;color:var(--gris);margin-bottom:5px}
 .cadb .btn:disabled{opacity:.45}
 
 /* galerie */
-.gal{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
-.gal img{width:100%;height:128px;object-fit:cover;border-radius:14px;cursor:zoom-in;
-  opacity:0;transform:scale(.94);animation:gin .5s var(--e) forwards;transition:transform .35s var(--e)}
+/* albums */
+.alb{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:18px}
+.alb button{position:relative;aspect-ratio:1/1.05;border-radius:18px;overflow:hidden;text-align:left;color:#fff;background:var(--bleuL);
+  box-shadow:0 8px 20px rgba(16,29,47,.12);opacity:0;transform:translateY(8px);animation:gin .5s var(--e) forwards}
+.alb button img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transition:transform .6s var(--e)}
+.alb button:active img{transform:scale(1.05)}
+.alb button::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(16,29,47,0) 40%,rgba(16,29,47,.82))}
+.alb button span{position:absolute;left:12px;right:12px;bottom:11px;z-index:1}
+.alb button b{display:block;font-size:14px;font-weight:800;line-height:1.2;text-shadow:0 1px 6px rgba(0,0,0,.3)}
+.alb button small{font-size:11px;font-weight:600;opacity:.9}
+.alb button i{position:absolute;top:10px;left:10px;z-index:1;font-style:normal;font-size:10px;font-weight:800;letter-spacing:.05em;background:var(--orange);padding:4px 8px;border-radius:999px}
+.gh{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:4px 0 10px}
+.gh h2{margin:0;font-size:16px}
+.gh small{color:var(--gris);font-size:12px;font-weight:600}
+.gback{display:inline-flex;align-items:center;gap:6px;font-size:12.5px;font-weight:800;color:var(--bleu);background:var(--bleuL);padding:8px 13px 8px 10px;border-radius:999px;margin-bottom:12px}
+/* mosaïque */
+.gal{display:grid;grid-template-columns:repeat(3,1fr);grid-auto-rows:1fr;grid-auto-flow:dense;gap:4px;border-radius:16px;overflow:hidden}
+.gal .gi{position:relative;aspect-ratio:1;overflow:hidden;background:var(--bleuL);cursor:zoom-in}
+.gal .gi.big{grid-column:span 2;grid-row:span 2}
+.gal img{width:100%;height:100%;object-fit:cover;display:block;opacity:0;transform:scale(1.04);animation:gin .5s var(--e) forwards;transition:transform .4s var(--e)}
 @keyframes gin{to{opacity:1;transform:none}}
-.gal img:active{transform:scale(.97)}
-.gal .gi{position:relative}
-.gal .gi .pl{position:absolute;left:50%;top:50%;width:42px;height:42px;margin:-21px 0 0 -21px;border-radius:50%;
-  background:rgba(16,29,47,.65);display:grid;place-items:center;pointer-events:none}
-.gal .gi .pl::after{content:"";border-left:13px solid #fff;border-top:8px solid transparent;border-bottom:8px solid transparent;margin-left:4px}
-.albs{display:flex;flex-wrap:wrap;gap:7px;margin:0 0 14px;padding:0}
-.albs button{max-width:100%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.albs::-webkit-scrollbar{display:none}
-.albs button{flex:none;padding:8px 14px;border-radius:999px;background:var(--carte);border:1px solid var(--trait);
-  font-size:12px;font-weight:700;color:var(--gris);white-space:nowrap}
-.albs button.on{background:var(--gr1);color:#fff;border-color:transparent}
-.lbx{position:fixed;top:calc(14px + env(safe-area-inset-top,0px));right:14px;width:40px;height:40px;border-radius:50%;
-  background:rgba(255,255,255,.16);color:#fff;font-size:24px;line-height:1}
-#lb{position:fixed;inset:0;z-index:90;background:rgba(10,20,32,.94);display:none;place-items:center;padding:20px;cursor:zoom-out}
-#lb.on{display:grid;animation:fade2 .3s both}
+.gal .gi:active img{transform:scale(.97)}
+.gal .gi .pl{position:absolute;left:50%;top:50%;width:40px;height:40px;margin:-20px 0 0 -20px;border-radius:50%;background:rgba(16,29,47,.55);display:grid;place-items:center;backdrop-filter:blur(4px)}
+.gal .gi .pl::after{content:"";border-left:12px solid #fff;border-top:7px solid transparent;border-bottom:7px solid transparent;margin-left:3px}
+/* visionneuse */
+#lb{position:fixed;inset:0;z-index:90;background:#0B1422;display:none;flex-direction:column;color:#fff}
+#lb.on{display:flex;animation:fade2 .25s both}
 @keyframes fade2{from{opacity:0}to{opacity:1}}
-#lb img{max-width:100%;max-height:86vh;border-radius:14px;object-fit:contain;animation:pop .4s var(--e) both}
+.lbt{display:flex;align-items:center;gap:10px;padding:calc(12px + env(safe-area-inset-top,0px)) 14px 10px}
+#lbn{flex:1;font-size:12.5px;font-weight:700;opacity:.85;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.lbb{width:40px;height:40px;border-radius:50%;background:rgba(255,255,255,.12);color:#fff;display:grid;place-items:center}
+.lbm{flex:1;min-height:0;display:grid;place-items:center;padding:0 10px;touch-action:pan-y}
+#lbi{max-width:100%;max-height:100%;object-fit:contain;border-radius:10px;animation:pop .35s var(--e) both}
+#lbv{width:min(96vw,900px);height:min(62vh,520px);border:0;border-radius:12px;background:#000;display:none}
+.lbn{position:absolute;top:50%;margin-top:-24px;width:44px;height:44px;border-radius:50%;background:rgba(255,255,255,.14);color:#fff;display:grid;place-items:center;backdrop-filter:blur(6px)}
+.lbp{left:10px} .lbq{right:10px}
+.lbf{display:flex;gap:10px;justify-content:center;padding:12px 16px calc(16px + env(safe-area-inset-bottom,0px))}
+.lbk{display:inline-flex;align-items:center;gap:8px;font-weight:800;font-size:14px;padding:12px 20px;border-radius:999px;background:var(--gr2);color:#fff;box-shadow:0 8px 20px rgba(240,127,19,.35)}
+.lbk.g{background:rgba(255,255,255,.14);box-shadow:none}
 
 /* contacts */
 .row{display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--trait)}
@@ -513,7 +531,7 @@ nav button.spacer{pointer-events:none;opacity:0}
       <div class="kick">Galerie</div>
       <h1>Photos et vidéos</h1>
       <p id="galSub" style="margin-bottom:14px">Les éditions précédentes de la Semaine du Dynamisme, et bientôt les images des JED 2026.</p>
-      <div class="albs" id="albs" style="display:none"></div>
+      <div id="albs" style="display:none"></div>
       <div class="gal" id="gal"></div>
       <p class="note" id="galNote"></p>
       <button class="btn btn-o full" id="driveBtn" style="margin-top:14px">Ouvrir l'album photos
@@ -579,7 +597,16 @@ nav button.spacer{pointer-events:none;opacity:0}
   </nav>
 </div>
 
-<div id="lb"><img src="" alt=""><iframe id="lbv" allow="autoplay; fullscreen" allowfullscreen style="display:none;width:min(94vw,900px);height:min(70vh,520px);border:0;border-radius:14px;background:#000"></iframe><button id="lbx" class="lbx" title="Fermer">×</button></div>
+<div id="lb">
+  <div class="lbt"><span id="lbn"></span><button id="lbx" class="lbb" title="Fermer"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg></button></div>
+  <div class="lbm" id="lbm"><img id="lbi" alt=""><iframe id="lbv" allow="autoplay; fullscreen" allowfullscreen></iframe></div>
+  <button class="lbn lbp" id="lbp" title="Précédente"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg></button>
+  <button class="lbn lbq" id="lbq" title="Suivante"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg></button>
+  <div class="lbf">
+    <button id="lbd" class="lbk"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v11m0 0-4.5-4.5M12 15l4.5-4.5M5 20h14"/></svg>Télécharger</button>
+    <button id="lbs" class="lbk g"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="2.5"/><circle cx="6" cy="12" r="2.5"/><circle cx="18" cy="19" r="2.5"/><path d="m8.2 10.8 7.6-4.4M8.2 13.2l7.6 4.4"/></svg>Partager</button>
+  </div>
+</div>
 
 <div id="cam">
   <div class="camTop">
@@ -681,6 +708,7 @@ OVL.forEach(id=>{ const el=document.getElementById(id); if(!el) return; let was=
     if(!on&&was&&!popping&&history.state&&history.state.ov===id) history.back();
     was=on; }).observe(el,{attributes:true,attributeFilter:['class']}); });
 window.addEventListener('popstate',e=>{
+  if(typeof ALB!=='undefined'&&ALB&&!(e.state&&e.state.alb)&&!document.getElementById('lb').classList.contains('on')){ ALB=''; renderAlbs(); renderGal(); }
   const open=OVL.map(id=>document.getElementById(id)).find(el=>el&&el.classList.contains('on'));
   popping=true;
   if(open){ if(open.id==='lb') closeLb(); else if(open.id==='cam'&&typeof closeCam==='function') closeCam(); else open.classList.remove('on'); }
@@ -899,44 +927,65 @@ document.querySelectorAll('#days button').forEach(b=>b.addEventListener('click',
 /* ---------- galerie ---------- */
 const LOCAL=['ed1','ed3','ed2'];
 let galLoaded=false;
+let GAL=null, ALB='', LIST=[], LI=0;
+const isVid=f=>/^video\//.test(f.mimeType||'');
+const nomAlb=a=>a.replace(/^\s*\d+\s*[.\-)]\s*/,'').replace(/\s*[-–]\s*JED\s*2026\s*$/i,'').trim()||a;
+function mosaic(items){
+  LIST=items;
+  document.getElementById('gal').innerHTML=items.map((f,n)=>'<div class="gi'+(n%9===0&&items.length>4?' big':'')+'" data-i="'+n+'"><img loading="lazy" style="animation-delay:'+(Math.min(n,14)*40)+'ms" src="'+f.th+'" alt="">'+(f.vid?'<span class="pl"></span>':'')+'</div>').join('');
+  document.querySelectorAll('#gal .gi').forEach(g=>g.onclick=()=>openLb(+g.dataset.i));
+}
 function showLocal(msg){
-  document.getElementById('gal').innerHTML=LOCAL.map((k,i)=>'<img src="'+SRC[k]+'" alt="" loading="lazy" style="animation-delay:'+(i*60)+'ms">').join('');
+  document.getElementById('albs').style.display='none';
+  mosaic(LOCAL.map(k=>({th:SRC[k],full:SRC[k],local:1})));
   document.getElementById('galNote').textContent=msg||'';
-  bindLb();
 }
-function bindLb(){
-  document.querySelectorAll('#gal img').forEach(im=>im.addEventListener('click',()=>{
-    const lb=document.getElementById('lb'), v=document.getElementById('lbv'), pic=lb.querySelector('img');
-    if(im.dataset.vid){ pic.style.display='none'; v.style.display='block'; v.src='https://drive.google.com/file/d/'+im.dataset.vid+'/preview'; }
-    else { v.style.display='none'; v.src='about:blank'; pic.style.display=''; pic.src=im.dataset.full||im.src; }
-    lb.classList.add('on');
-  }));
-}
-function closeLb(){ const lb=document.getElementById('lb'), v=document.getElementById('lbv'); lb.classList.remove('on'); v.src='about:blank'; }
-document.getElementById('lb').addEventListener('click',e=>{ if(e.target.id!=='lbv') closeLb(); });
-let GAL=null, ALB='';
-function renderGal(){
-  const files=GAL.files.filter(f=>!ALB || f.album===ALB || (f.album||'').startsWith(ALB+' › '));
-  document.getElementById('gal').innerHTML=files.map((f,n)=>{
-    const id=f.id, vid=/^video\//.test(f.mimeType||'');
-    return '<div class="gi"><img loading="lazy" style="animation-delay:'+(Math.min(n,11)*55)+'ms" '+
-      'src="https://drive.google.com/thumbnail?id='+id+'&sz=w600" '+
-      (vid?'data-vid="'+id+'" ':'data-full="https://drive.google.com/thumbnail?id='+id+'&sz=w1600" ')+'alt="">'+
-      (vid?'<span class="pl"></span>':'')+'</div>';
-  }).join('');
-  const nP=files.filter(f=>!/^video\//.test(f.mimeType||'')).length, nV=files.length-nP;
-  document.getElementById('galNote').textContent=
-    [nP?nP+' photo'+(nP>1?'s':''):'', nV?nV+' vidéo'+(nV>1?'s':''):''].filter(Boolean).join(' · ')+' · depuis le Drive de l\'UJDM';
-  bindLb();
-}
+const asItem=f=>({id:f.id,vid:isVid(f),album:f.album||'',th:'https://drive.google.com/thumbnail?id='+f.id+'&sz=w500',full:'https://drive.google.com/thumbnail?id='+f.id+'&sz=w2000'});
 function renderAlbs(){
   const box=document.getElementById('albs'), top=(GAL.albums||[]).filter(a=>a.indexOf(' › ')<0);
-  if(!top.length){ box.style.display='none'; return; }
-  box.style.display='flex';
-  box.innerHTML=['<button data-a="" class="'+(ALB?'':'on')+'">Tout</button>'].concat(top.map(a=>'<button data-a="'+a.replace(/"/g,'&quot;')+'" class="'+(ALB===a?'on':'')+'"></button>')).join('');
-  box.querySelectorAll('button').forEach((b,k)=>{ if(k) b.textContent=b.dataset.a;
-    b.onclick=()=>{ ALB=b.dataset.a; renderAlbs(); renderGal(); }; });
+  if(!top.length||ALB){ box.style.display=ALB?'block':'none';
+    if(ALB){ const n=GAL.files.filter(f=>f.album===ALB||(f.album||'').startsWith(ALB+' › ')).length;
+      box.innerHTML='<button class="gback" id="gback"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>Tous les albums</button><div class="gh"><h2>'+nomAlb(ALB)+'</h2><small>'+n+' élément'+(n>1?'s':'')+'</small></div>';
+      document.getElementById('gback').onclick=()=>{ if(history.state&&history.state.alb) history.back(); else { ALB=''; renderAlbs(); renderGal(); } document.getElementById('main').scrollTop=0; }; }
+    return; }
+  box.style.display='block';
+  const card=(a,i)=>{ const fs=GAL.files.filter(f=>f.album===a||(f.album||'').startsWith(a+' › ')), ph=fs.find(f=>!isVid(f))||fs[0];
+    return '<button data-a="'+a.replace(/"/g,'&quot;')+'" style="animation-delay:'+(i*60)+'ms">'+(ph?'<img loading="lazy" src="https://drive.google.com/thumbnail?id='+ph.id+'&sz=w600" alt="">':'')+'<i>ALBUM</i><span><b></b><small>'+fs.length+' photo'+(fs.length>1?'s':'')+'</small></span></button>'; };
+  box.innerHTML='<div class="gh"><h2>Les albums</h2><small>'+top.length+' album'+(top.length>1?'s':'')+'</small></div><div class="alb">'+top.map(card).join('')+'</div><div class="gh"><h2>Toutes les photos</h2><small>'+GAL.files.length+'</small></div>';
+  box.querySelectorAll('.alb button').forEach(b=>{ b.querySelector('b').textContent=nomAlb(b.dataset.a);
+    b.onclick=()=>{ ALB=b.dataset.a; history.pushState({s:'galerie',alb:ALB},''); renderAlbs(); renderGal(); document.getElementById('main').scrollTop=0; }; });
 }
+function renderGal(){
+  const files=GAL.files.filter(f=>!ALB||f.album===ALB||(f.album||'').startsWith(ALB+' › '));
+  mosaic(files.map(asItem));
+  const nP=files.filter(f=>!isVid(f)).length, nV=files.length-nP;
+  document.getElementById('galNote').textContent=[nP?nP+' photo'+(nP>1?'s':''):'', nV?nV+' vidéo'+(nV>1?'s':''):''].filter(Boolean).join(' · ');
+}
+/* visionneuse */
+function showLb(){
+  const f=LIST[LI], im=document.getElementById('lbi'), v=document.getElementById('lbv');
+  if(f.vid){ im.style.display='none'; v.style.display='block'; v.src='https://drive.google.com/file/d/'+f.id+'/preview'; }
+  else { v.style.display='none'; v.src='about:blank'; im.style.display=''; im.src=f.th; const hi=new Image(); hi.onload=()=>{ if(LIST[LI]===f) im.src=f.full; }; hi.src=f.full; }
+  document.getElementById('lbn').textContent=(LI+1)+' / '+LIST.length+(f.album?' · '+nomAlb(f.album.split(' › ')[0]):'');
+  const many=LIST.length>1; document.getElementById('lbp').style.display=many?'':'none'; document.getElementById('lbq').style.display=many?'':'none';
+}
+function openLb(i){ LI=i; showLb(); document.getElementById('lb').classList.add('on'); }
+function closeLb(){ document.getElementById('lb').classList.remove('on'); document.getElementById('lbv').src='about:blank'; }
+const step=d=>{ LI=(LI+d+LIST.length)%LIST.length; showLb(); };
+document.getElementById('lbx').onclick=closeLb;
+document.getElementById('lbp').onclick=()=>step(-1);
+document.getElementById('lbq').onclick=()=>step(1);
+document.addEventListener('keydown',e=>{ if(!document.getElementById('lb').classList.contains('on')) return; if(e.key==='ArrowLeft') step(-1); if(e.key==='ArrowRight') step(1); if(e.key==='Escape') closeLb(); });
+(()=>{ let x0=null; const m=document.getElementById('lbm');
+  m.addEventListener('touchstart',e=>{ x0=e.touches.length===1?e.touches[0].clientX:null; },{passive:true});
+  m.addEventListener('touchend',e=>{ if(x0===null) return; const dx=e.changedTouches[0].clientX-x0; if(Math.abs(dx)>50) step(dx<0?1:-1); x0=null; });
+  m.addEventListener('click',e=>{ if(e.target===m) closeLb(); }); })();
+document.getElementById('lbd').onclick=()=>{ const f=LIST[LI];
+  const a=document.createElement('a'); a.href=f.local?f.full:'https://drive.google.com/uc?export=download&id='+f.id; a.download='JED2026-'+(LI+1)+(f.vid?'.mp4':'.jpg'); a.target='_blank'; a.rel='noopener';
+  document.body.appendChild(a); a.click(); a.remove(); toast('Téléchargement lancé'); };
+document.getElementById('lbs').onclick=async()=>{ const f=LIST[LI], url=f.local?location.href:'https://drive.google.com/file/d/'+f.id+'/view';
+  if(navigator.share){ try{ await navigator.share({title:'JED 2026',text:'Une photo des JED 2026 #JED2026',url}); }catch(e){} }
+  else { try{ await navigator.clipboard.writeText(url); toast('Lien copié'); }catch(e){ window.open(url,'_blank','noopener'); } } };
 function moments(){
   const box=document.getElementById('moments'); if(!GAL) return;
   const ph=GAL.files.filter(f=>!/^video\//.test(f.mimeType||'')); if(ph.length<3){ box.style.display='none'; return; }
