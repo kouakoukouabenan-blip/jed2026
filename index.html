@@ -942,7 +942,7 @@ function showLocal(msg){
 }
 const asItem=f=>({id:f.id,vid:isVid(f),album:f.album||'',th:'https://drive.google.com/thumbnail?id='+f.id+'&sz=w500',full:'https://drive.google.com/thumbnail?id='+f.id+'&sz=w2000'});
 function renderAlbs(){
-  const box=document.getElementById('albs'), top=(GAL.albums||[]).filter(a=>a.indexOf(' › ')<0);
+  const box=document.getElementById('albs'), top=(GAL.albums||[]).filter(a=>a.indexOf(' › ')<0&&GAL.files.some(f=>f.album===a||(f.album||'').startsWith(a+' › ')));
   if(!top.length||ALB){ box.style.display=ALB?'block':'none';
     if(ALB){ const n=GAL.files.filter(f=>f.album===ALB||(f.album||'').startsWith(ALB+' › ')).length;
       box.innerHTML='<button class="gback" id="gback"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>Tous les albums</button><div class="gh"><h2>'+nomAlb(ALB)+'</h2><small>'+n+' élément'+(n>1?'s':'')+'</small></div>';
