@@ -237,7 +237,7 @@ ul.l li{font-size:13.2px;color:var(--gris);margin-bottom:5px}
 .jys em{font-style:normal;font-size:12.5px;opacity:.92}
 .jys .jr{flex:none;width:52px;height:52px;border-radius:50%;background:var(--orange);display:grid;place-items:center;box-shadow:0 0 0 6px rgba(255,255,255,.18)}
 .cad{border-radius:18px;overflow:hidden;box-shadow:0 14px 30px rgba(16,29,47,.18);background:#fff}
-.cad canvas{display:block;width:100%;height:auto;touch-action:none;cursor:grab}
+.cad canvas{display:block;width:100%;height:auto;touch-action:pan-y;cursor:grab}
 .zr{display:none;align-items:center;gap:10px;margin-top:12px;font-weight:800;color:var(--gris)}
 .zr.on{display:flex} .zr input{flex:1;accent-color:var(--orange)}
 .cadb{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px}
@@ -535,7 +535,7 @@ nav button.spacer{pointer-events:none;opacity:0}
         <button class="btn btn-g" id="cadD" disabled>Télécharger</button>
         <button class="btn btn-g" id="cadS" disabled>Partager</button>
       </div>
-      <p class="note">Faites glisser la photo pour la placer dans le cercle, et réglez le zoom avec le curseur ou avec deux doigts. Votre photo reste sur votre téléphone : elle n’est envoyée nulle part.</p>
+      <p class="note">Faites glisser la photo <b>dans le cercle</b> pour la placer, et réglez le zoom avec le curseur ou avec deux doigts. Pour faire défiler la page, touchez en dehors du cercle. Votre photo reste sur votre téléphone : elle n’est envoyée nulle part.</p>
     </section>
 
     <section class="screen" id="s-infos">
@@ -782,16 +782,26 @@ tick(); setInterval(tick,1000);
     im.src=URL.createObjectURL(f); };
   document.getElementById('cadF').addEventListener('change',pick); document.getElementById('cadCam').addEventListener('change',pick);
   document.getElementById('cadZ').addEventListener('input',e=>{ st.z=+e.target.value; draw(); });
-  const P=new Map(); let d0=0,z0=1;
   const k=()=>1080/C.getBoundingClientRect().width;
-  C.addEventListener('pointerdown',e=>{ if(!st.img) return; C.setPointerCapture(e.pointerId); P.set(e.pointerId,{x:e.clientX,y:e.clientY});
-    if(P.size===2){ const [a,b]=[...P.values()]; d0=Math.hypot(a.x-b.x,a.y-b.y); z0=st.z; } });
-  C.addEventListener('pointermove',e=>{ if(!P.has(e.pointerId)) return; const o=P.get(e.pointerId);
-    if(P.size===1){ st.x+=(e.clientX-o.x)*k(); st.y+=(e.clientY-o.y)*k(); }
-    P.set(e.pointerId,{x:e.clientX,y:e.clientY});
-    if(P.size===2){ const [a,b]=[...P.values()]; const d=Math.hypot(a.x-b.x,a.y-b.y); st.z=Math.max(1,Math.min(3,z0*d/d0)); document.getElementById('cadZ').value=st.z; }
-    draw(); });
-  const up=e=>P.delete(e.pointerId); C.addEventListener('pointerup',up); C.addEventListener('pointercancel',up);
+  const inC=(px,py)=>{ const r=C.getBoundingClientRect(), q=1080/r.width, dx=(px-r.left)*q-CX, dy=(py-r.top)*q-CY; return dx*dx+dy*dy<=(R*1.08)**2; };
+  const dist=t=>Math.hypot(t[0].clientX-t[1].clientX,t[0].clientY-t[1].clientY);
+  /* doigt : on ne bloque le défilement que si l'on touche la photo (dans le cercle) ou si l'on pince à deux doigts */
+  let T=null;
+  C.addEventListener('touchstart',e=>{ if(!st.img){ T=null; return; } const t=e.touches;
+    if(t.length===1){ if(!inC(t[0].clientX,t[0].clientY)){ T=null; return; } T={x:t[0].clientX,y:t[0].clientY}; }
+    else if(t.length===2){ T={d:dist(t),z:st.z}; }
+    e.preventDefault(); },{passive:false});
+  C.addEventListener('touchmove',e=>{ if(!T) return; e.preventDefault(); const t=e.touches;
+    if(t.length===1&&T.x!==undefined){ st.x+=(t[0].clientX-T.x)*k(); st.y+=(t[0].clientY-T.y)*k(); T.x=t[0].clientX; T.y=t[0].clientY; }
+    else if(t.length===2&&T.d){ st.z=Math.max(1,Math.min(3,T.z*dist(t)/T.d)); document.getElementById('cadZ').value=st.z; }
+    draw(); },{passive:false});
+  C.addEventListener('touchend',e=>{ const t=e.touches; if(!T) return;
+    if(t.length===0) T=null; else if(t.length===1) T={x:t[0].clientX,y:t[0].clientY}; });
+  /* souris (ordinateur) */
+  let M=null;
+  C.addEventListener('pointerdown',e=>{ if(e.pointerType!=='mouse'||!st.img||!inC(e.clientX,e.clientY)) return; M={x:e.clientX,y:e.clientY}; C.setPointerCapture(e.pointerId); });
+  C.addEventListener('pointermove',e=>{ if(!M) return; st.x+=(e.clientX-M.x)*k(); st.y+=(e.clientY-M.y)*k(); M={x:e.clientX,y:e.clientY}; draw(); });
+  C.addEventListener('pointerup',()=>M=null);
   function blob(cb){ C.toBlob(cb,'image/jpeg',.93); }
   function save(){ blob(b=>{ const a=document.createElement('a'); a.href=URL.createObjectURL(b); a.download='JED2026-jy-serai.jpg'; document.body.appendChild(a); a.click(); a.remove(); toast('Image enregistrée'); }); }
   document.getElementById('cadD').addEventListener('click',save);
