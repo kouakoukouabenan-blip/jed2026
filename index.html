@@ -527,7 +527,10 @@ nav button.spacer{pointer-events:none;opacity:0}
       <p style="margin-bottom:14px">Ajoutez votre photo au visuel officiel, puis partagez-le sur vos réseaux avec <span class="ink">#JED2026</span>.</p>
       <div class="cad"><canvas id="cadC" width="1080" height="1080"></canvas></div>
       <div class="zr" id="zr"><span>−</span><input type="range" id="cadZ" min="1" max="3" step="0.01" value="1" aria-label="Zoom"><span>+</span></div>
-      <label class="btn btn-o full" style="margin-top:12px;cursor:pointer"><input type="file" id="cadF" accept="image/*" hidden>Choisir ma photo</label>
+      <div class="cadb" style="margin-top:12px">
+        <label class="btn btn-o" style="cursor:pointer"><input type="file" id="cadCam" accept="image/*" capture="user" hidden>📷 Prendre une photo</label>
+        <label class="btn btn-o" style="cursor:pointer"><input type="file" id="cadF" accept="image/*" hidden>🖼️ Ma galerie</label>
+      </div>
       <div class="cadb">
         <button class="btn btn-g" id="cadD" disabled>Télécharger</button>
         <button class="btn btn-g" id="cadS" disabled>Partager</button>
@@ -773,10 +776,11 @@ tick(); setInterval(tick,1000);
     else { X.fillStyle='rgba(255,255,255,.75)'; X.font='700 30px Inter,sans-serif'; X.textAlign='center'; X.fillText('Votre photo ici',CX,CY+10); }
     if(fr.complete) X.drawImage(fr,0,0,1080,1080);
   }
-  document.getElementById('cadF').addEventListener('change',e=>{ const f=e.target.files[0]; if(!f) return;
+  const pick=e=>{ const f=e.target.files[0]; e.target.value=''; if(!f) return;
     const im=new Image(); im.onload=()=>{ st.img=im; st.z=1; st.x=0; st.y=0; document.getElementById('cadZ').value=1;
       document.getElementById('zr').classList.add('on'); document.getElementById('cadD').disabled=false; document.getElementById('cadS').disabled=false; draw(); };
-    im.src=URL.createObjectURL(f); });
+    im.src=URL.createObjectURL(f); };
+  document.getElementById('cadF').addEventListener('change',pick); document.getElementById('cadCam').addEventListener('change',pick);
   document.getElementById('cadZ').addEventListener('input',e=>{ st.z=+e.target.value; draw(); });
   const P=new Map(); let d0=0,z0=1;
   const k=()=>1080/C.getBoundingClientRect().width;
